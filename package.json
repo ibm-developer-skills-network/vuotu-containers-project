@@ -1,0 +1,25 @@
+{
+  "name": "Example",
+  "version": "1.0.0",
+  "description": "Example health prototype",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IBM/health-records-system"
+  },
+  "author": "Anton McConville",
+  "license": "EPL-1.0",
+  "bugs": {
+    "url": "https://github.com/IBM/health-records-system"
+  },
+  "homepage": "https://github.com/IBM/health-records-system",
+  "dependencies": {
+    "log4js": "^6.7.1"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
