@@ -1,14 +1,12 @@
-var request = require('request');
-// var API_URL = "https://api.us.apiconnect.ibmcloud.com/spbodieusibmcom-kenishia/sb/";
+const request = require('axios');
 
 function getPatientInfo(url, patientID) {
 	return new Promise(function(resolve, reject) {
-		request(url + "getInfo/patients/" + patientID, function (error, response, body) {
-	 		if (!error && response.statusCode == 200) {
+		request.get(url + "getInfo/patients/" + patientID).then((response)=> {
+	 		if (response.statusCode == 200) {
+				let body = JSON.parse(response.body);
 
-				body = JSON.parse(body);
-
-	    		var patientInfo = {
+	    		let patientInfo = {
 					      name: body["HCCMAREA"]["CA_PATIENT_REQUEST"]["CA_FIRST_NAME"] + " " + body["HCCMAREA"]["CA_PATIENT_REQUEST"]["CA_LAST_NAME"],
 					      age: getAge(body["HCCMAREA"]["CA_PATIENT_REQUEST"]["CA_DOB"]),
 					      street: body["HCCMAREA"]["CA_PATIENT_REQUEST"]["CA_ADDRESS"],
@@ -25,10 +23,10 @@ function getPatientInfo(url, patientID) {
 
 function getPatientMedications(url, patientID) {
 	return new Promise(function(resolve, reject) {
-		request(url + "getInfo/prescription/" + patientID, function (error, response, body) {
+		request.get(url + "getInfo/prescription/" + patientID).then((response)=> {
 			var medications = [];
-	 		if (!error && response.statusCode == 200) {
-	 			body = JSON.parse(body);
+	 		if (response.statusCode == 200) {
+	 			let body = JSON.parse(response.body);
 
 	 			try {
 					var medicationData = body["GETMEDO"]["CA_LIST_MEDICATION_REQUEST"]["CA_MEDICATIONS"];
@@ -52,22 +50,19 @@ function getPatientMedications(url, patientID) {
 
 function getPatientAppointments(url, patientID) {
 	return new Promise(function(resolve, reject) {
-		request(url + "appointments/list/" + patientID, function (error, response, body) {
-			var appointments = [];
-	 		if (!error && response.statusCode == 200) {
-
-				body = JSON.parse(body);
+		request.get(url + "appointments/list/" + patientID).then((response)=>{
+			let appointments = [];
+			let body = JSON.parse(response.body);
 				 
-				var appointmentsData = body["ResultSet Output"]
+			let appointmentsData = body["ResultSet Output"]
 
-	 			for (var i = 0, len = appointmentsData.length; i < len; i++) {
-					appointments.push(appointmentsData[i]["APPT_DATE"].trim() + " " + appointmentsData[i]["APPT_TIME"].trim().replace(".",":").substring(0,5) + " - " + appointmentsData[i]["MED_FIELD"].trim());
-				}
-				return resolve(appointments);
-	  		} else {
-	  			return resolve(appointments);
-	  		}
-	  	});
+ 			for (let i = 0, len = appointmentsData.length; i < len; i++) {
+				appointments.push(appointmentsData[i]["APPT_DATE"].trim() + " " + appointmentsData[i]["APPT_TIME"].trim().replace(".",":").substring(0,5) + " - " + appointmentsData[i]["MED_FIELD"].trim());
+			}
+			return resolve(appointments);
+		}).catch((error)=>{
+				console.log(error);
+		})
 	})
 }
 
